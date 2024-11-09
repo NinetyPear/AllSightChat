@@ -1,8 +1,0 @@
-# Dont Track _pycache_ folder
-__pycache__/
-# Dont Track .venv folder
-.venv/
-# Dont Track venv folder
-venv/
-# Dont Track Dev Config
-config.py
