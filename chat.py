@@ -2,13 +2,20 @@ import openai
 import config
 import customtkinter as ctk
 import tkinter as tk
-import threading
+import requests
+import zipfile
+import os
+import sys
+from io import BytesIO
 
-# Set up OpenAI API key and organization ID (if applicable)
-openai.api_key = config.OPENAI_API_KEY
-openai.organization = config.ORGANIZATION_ID  # Optional, only if you're using an organization ID
+# Import CURRENT_VERSION from config
+from config import CURRENT_VERSION
 
-# Global variable to store incoming message chunks for streaming
+# GitHub repository details
+repo_owner = "NinetyPear"
+repo_name = "AllSightChat"
+
+# Define the global variable to store incoming message chunks for streaming
 message_chunks = []
 
 # Function to get a response from OpenAI API with streaming
@@ -24,7 +31,7 @@ def get_ai_response(prompt):
         for chunk in response:
             message_chunk = chunk['choices'][0]['delta'].get('content', '')
             if message_chunk:
-                message_chunks.append(message_chunk)
+                message_chunks.append(message_chunk)  # Add the chunk to the list
                 response_text += message_chunk
         return response_text
     except Exception as e:
@@ -47,26 +54,31 @@ def send_message(event=None):
     entry.delete(0, "end")
     
     # Start fetching AI response in a new thread
-    threading.Thread(target=fetch_response_in_background, args=(user_input,), daemon=True).start()
+    fetch_response_in_background(user_input)
 
+# Function to display messages with rounded bubbles using Canvas
+# Function to display messages with rounded bubbles using Canvas
+# Function to display messages with rounded bubbles using Canvas
+# Function to display messages with rounded bubbles using Canvas
 # Function to display messages with rounded bubbles using Canvas
 def display_message(sender, message):
     # Create a frame for the message bubble with no padding
-    bubble_frame = tk.Frame(messages_frame, bg="#1e1e1e")
-    bubble_frame.pack(fill="x", anchor="e" if sender == "You" else "w", pady=0, padx=0)  # Removed all padding
+    bubble_frame = tk.Frame(messages_frame, bg="#1e1e1e", pady=0)
+    bubble_frame.grid(sticky="w" if sender == "AllSight" else "e", padx=10)  # Using grid for better control
 
     # Configure colors and alignment based on sender
     bubble_color = "#2a2d32" if sender == "You" else "#2f3136"
     text_color = "#4da6ff" if sender == "You" else "#82e0aa"
     justify = "e" if sender == "You" else "w"
 
-    # Calculate bubble height based on message length
-    lines = message.count('\n') + message.count(' ') // 45 + 1
-    bubble_height = 20 + lines * 15  # Slightly reduced height
+    # Adjust the text and bubble height dynamically based on the message length
+    max_line_length = 45  # Number of characters before wrapping to the next line
+    lines = (len(message) // max_line_length) + 1
+    bubble_height = 20 + (lines * 18)  # Adjust bubble height based on the line count
 
     # Create a Canvas with height adjusted to message content
-    bubble_canvas = tk.Canvas(bubble_frame, bg="#1e1e1e", highlightthickness=0, width=400, height=bubble_height)
-    bubble_canvas.pack(anchor=justify)
+    bubble_canvas = tk.Canvas(bubble_frame, bg="#1e1e1e", highlightthickness=0, width=380, height=bubble_height)
+    bubble_canvas.grid(row=0, column=0)  # Position the canvas inside the frame with grid
 
     # Draw rounded rectangle for the bubble effect
     x1, y1, x2, y2, radius = 5, 5, 380, bubble_height, 15
@@ -77,18 +89,69 @@ def display_message(sender, message):
     bubble_canvas.create_rectangle((x1 + radius / 2, y1, x2 - radius / 2, y2), fill=bubble_color, outline=bubble_color)
     bubble_canvas.create_rectangle((x1, y1 + radius / 2, x2, y2 - radius / 2), fill=bubble_color, outline=bubble_color)
 
-    # Display the message text within the bubble
+    # Display the message text with wrapping inside the bubble
     bubble_canvas.create_text(x1 + 10, y1 + 5, text=f"{sender}: {message}", fill=text_color, font=("Helvetica Neue", 12), anchor="nw", width=350)
 
     # Auto-scroll to the bottom of the canvas
     messages_canvas.update_idletasks()
     messages_canvas.yview_moveto(1)
 
+
+# Function to check for updates
+def check_for_updates():
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/tags"
+    
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            latest_tag = response.json()[0]["name"]  # Get the name of the latest tag
+            return latest_tag
+        else:
+            print(f"Failed to check for updates. Status Code: {response.status_code}")
+            return None
+    except requests.RequestException as e:
+        print(f"Error checking for updates: {e}")
+        return None
+
+# Function to download the latest release
+def download_latest_release(version):
+    url = f"https://github.com/{repo_owner}/{repo_name}/archive/refs/tags/{version}.zip"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            with zipfile.ZipFile(BytesIO(response.content)) as zip_ref:
+                zip_ref.extractall(".")
+            print("Update downloaded and extracted.")
+        else:
+            print("Failed to download update.")
+    except requests.RequestException as e:
+        print(f"Error downloading update: {e}")
+
+# Function to restart the program
+def restart_program():
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+# Function to update the program based on the check
+def update_program():
+    latest_version = check_for_updates()
+    if latest_version and latest_version != CURRENT_VERSION:
+        print(f"A new version ({latest_version}) is available! Updating...")
+        update_label.config(text=f"A new version ({latest_version}) is available! Updating...")
+        download_latest_release(latest_version)
+        restart_program()
+    else:
+        update_label.config(text="You’re using the latest version.")
+        print("You’re using the latest version.")
+
+# Function to run update check in the main thread without blocking UI
+def update_in_background():
+    root.after(5000, update_program)  # Call update_program after 5 seconds to avoid blocking UI
+
 # Initialize custom tkinter and set appearance
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
-# Set up the main window
+# Create the root window
 root = ctk.CTk()
 root.title("Chat with AllSight")
 root.geometry("500x600")
@@ -124,14 +187,23 @@ input_frame.pack(fill="x", pady=5)
 # User input field in the input frame
 entry = ctk.CTkEntry(input_frame, font=("Helvetica Neue", 12))
 entry.pack(side="left", fill="x", padx=(10, 5), pady=10, expand=True)
-entry.bind("<Return>", send_message)  # Bind Enter key to send message
 
 # Send button in the input frame
 send_button = ctk.CTkButton(input_frame, text="Send", command=send_message, font=("Helvetica Neue", 12))
 send_button.pack(side="right", padx=(5, 10), pady=10)
 
+# Create a label to display the update status at the bottom
+update_label = tk.Label(root, text="Checking for updates...", bg="#1e1e1e", fg="#82e0aa", font=("Helvetica Neue", 10))
+update_label.pack(side="bottom", fill="x", pady=5)
+
 # Focus entry field on start
 entry.focus_set()
+
+# Bind Enter key to send message
+entry.bind("<Return>", send_message)
+
+# Start the update check
+update_in_background()
 
 # Start the main loop
 root.mainloop()
