@@ -4,7 +4,7 @@
 # REMOVE ".example" FROM THE FILENAME AFTER UPDATING THE API KEY TO config.py (Example filename: config.py | NOT config.example.py)
 ############################################################################################################
 #AllSight Version
-CURRENT_VERSION = "v1.0.1" # (Do not change this value)
+CURRENT_VERSION = "v2.0" # (Do not change this value)
 # OpenAI API Key
 OPENAI_API_KEY = "your-openai-api-key"
 # 5150 Access Key
