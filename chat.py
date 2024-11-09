@@ -1,5 +1,5 @@
 import openai
-import config
+from config import OPENAI_API_KEY, ORGANIZATION_ID, CURRENT_VERSION
 import customtkinter as ctk
 import tkinter as tk
 import requests
@@ -14,6 +14,8 @@ from config import CURRENT_VERSION
 # GitHub repository details
 repo_owner = "NinetyPear"
 repo_name = "AllSightChat"
+
+openai.api_key = OPENAI_API_KEY
 
 # Define the global variable to store incoming message chunks for streaming
 message_chunks = []

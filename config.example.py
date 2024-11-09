@@ -11,3 +11,5 @@ OPENAI_API_KEY = "your-openai-api-key"
 ORGANIZATION_ID = "your-organization-id"
 # 5150 Access Key
 AccessKey_5150 = "your-5150-access-key"
+# 5150 User ID
+UserID_5150 = "your-5150-user-id"
