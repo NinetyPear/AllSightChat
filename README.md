@@ -21,6 +21,11 @@ AllSight Chat is a simple, customizable chat application powered by OpenAI’s G
    git clone https://github.com/NinetyPear/AllSightChat.git
    cd AllSightChat
 
+1. **Download Repository (Optional)**
+   ```bash
+   Download the Lasest Tag https://github.com/NinetyPear/AllSightChat/releases/tag/
+
+
 2. **Install Dependencies**
    ```bash
    pip install -r requirements.txt
