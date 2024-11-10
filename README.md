@@ -36,6 +36,7 @@ AllSight Chat is a simple, customizable chat application powered by OpenAI’s G
 4. **Run the Application**
    ```bash
    python chatbot.py
+   or you can Run the .exe file named 'chat.exe'
 
 ### Usage
 1) Enter your message in the input box and press "Send" or hit Enter.
