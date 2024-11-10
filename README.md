@@ -31,6 +31,7 @@ AllSight Chat is a simple, customizable chat application powered by OpenAI’s G
    # REMOVE ".example" FROM THE FILENAME AFTER UPDATING THE API KEY TO config.py (Example filename: config.py | NOT config.example.py)
    OPENAI_API_KEY = "your-openai-api-key"
    AccessKey_5150 = "your-5150-access-key"
+   UserID_5150 = "your-5150-userID"
 
 4. **Run the Application**
    ```bash
