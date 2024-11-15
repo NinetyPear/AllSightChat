@@ -21,6 +21,11 @@ AllSight Chat is a simple, customizable chat application powered by OpenAI’s G
    git clone https://github.com/NinetyPear/AllSightChat.git
    cd AllSightChat
 
+1. **Download Repository (Optional)**
+   ```bash
+   Download the Lasest Tag https://github.com/NinetyPear/AllSightChat/releases/tag/
+
+
 2. **Install Dependencies**
    ```bash
    pip install -r requirements.txt
@@ -31,10 +36,12 @@ AllSight Chat is a simple, customizable chat application powered by OpenAI’s G
    # REMOVE ".example" FROM THE FILENAME AFTER UPDATING THE API KEY TO config.py (Example filename: config.py | NOT config.example.py)
    OPENAI_API_KEY = "your-openai-api-key"
    AccessKey_5150 = "your-5150-access-key"
+   UserID_5150 = "your-5150-userID"
 
 4. **Run the Application**
    ```bash
    python chatbot.py
+   or you can Run the .exe file named 'chat.exe'
 
 ### Usage
 1) Enter your message in the input box and press "Send" or hit Enter.
