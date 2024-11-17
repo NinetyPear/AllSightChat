@@ -10,3 +10,6 @@ venv/
 config.py
 # Dont Track test.py
 test.py
+# Dont track cheatsheets
+NewVersion.txt
+CommitMessage.txt
