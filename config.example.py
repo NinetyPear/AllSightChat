@@ -4,7 +4,7 @@
 # REMOVE ".example" FROM THE FILENAME AFTER UPDATING THE API KEY TO config.py (Example filename: config.py | NOT config.example.py)
 ############################################################################################################
 #AllSight Version
-CURRENT_VERSION = "v2.5" # (Do not change this value)
+CURRENT_VERSION = "Beta-v1" # (Do not change this value)
 # 5150 Access Key
 AccessKey_5150 = "your-5150-access-key"
 # 5150 User ID
